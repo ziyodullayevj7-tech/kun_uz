@@ -1,0 +1,17 @@
+### create
+POST localhost:8081/region
+Content-Type: application/json
+
+{
+  "key": "2341AS3J",
+  "nameEn": "Samarkand",
+  "nameRu": "Самарканд",
+  "nameUz": "Samarqand",
+  "orderNumber": "234ASDF234"
+}
+
+### GET ALL
+GET localhost:8081/region/get-all
+
+### get by lang
+GET localhost:8081/region/get-by-language/en

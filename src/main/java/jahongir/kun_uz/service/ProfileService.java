@@ -95,11 +95,11 @@ public class ProfileService {
         return toDto(optional.get());
     }
 
-    public List<ProfileDto> getByName(String name) {
+    public List<ProfileRoleDto> getByName(String name) {
         Optional<List<Integer>> optional = profileRepository.getIdByName(name);
         if (optional.isEmpty()){
             throw new IllegalArgumentException("No user found with this name");
         }
-        List<ProfileRoleDto> dtos = profileRoleService.getListByProfileId(optional.get());
+        return profileRoleService.getListByProfileId(optional.get());
     }
 }

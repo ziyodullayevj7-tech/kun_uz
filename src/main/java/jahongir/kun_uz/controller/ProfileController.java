@@ -1,6 +1,7 @@
 package jahongir.kun_uz.controller;
 
 import jahongir.kun_uz.dto.ProfileDto;
+import jahongir.kun_uz.dto.ProfileRoleDto;
 import jahongir.kun_uz.exp.ItemNotFoundException;
 import jahongir.kun_uz.service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +53,8 @@ public class ProfileController {
     }
 
     @GetMapping("/get-by-id/{name}")
-    public ResponseEntity<List<ProfileDto>> getById(@PathVariable String name){
-        List<ProfileDto> result = profileService.getByName(name);
+    public ResponseEntity<List<ProfileRoleDto>> getById(@PathVariable String name){
+        List<ProfileRoleDto> result = profileService.getByName(name);
         return ResponseEntity.ok(result);
     }
 }
