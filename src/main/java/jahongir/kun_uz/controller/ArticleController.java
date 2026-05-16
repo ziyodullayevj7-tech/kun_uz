@@ -59,4 +59,12 @@ public class ArticleController {
             @RequestBody ArticleExceptIdsDto dto){
         return ResponseEntity.ok(articleService.paginationExceptForIds(PageUtil.page(page), dto));
     }
+
+    @GetMapping("/pagination-by-category-id/{categoryId}")
+    public ResponseEntity<PageImpl<ArticleShortInfoDto>> paginationByCategoryId(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @PathVariable Integer categoryId){
+        return ResponseEntity.ok(articleService.paginationByCategoryId(PageUtil.page(page), size, categoryId));
+    }
 }

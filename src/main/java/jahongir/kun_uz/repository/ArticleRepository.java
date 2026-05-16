@@ -17,4 +17,7 @@ public interface ArticleRepository extends CrudRepository<ArticleEntity, Integer
 
     @Query("from ArticleEntity as a where a.id not in :ids")
     Page<ArticleEntity> findAllExceptIds(Pageable pageable, List<Integer> ids);
+
+    @Query("select a from ArticleEntity as a inner join a.categories as c where c.id =:categoryId")
+    Page<ArticleEntity> findAllByCategoryId(Pageable pageable, int size, Integer categoryId);
 }

@@ -139,4 +139,13 @@ public class ArticleService {
         result.getContent().forEach(entity -> dtos.add(toShortDtoFromEntity(entity)));
         return new PageImpl<>(dtos, pageable, result.getTotalElements());
     }
+
+    public PageImpl<ArticleShortInfoDto> paginationByCategoryId(int page, int size, Integer categoryId) {
+        Pageable pageable = PageRequest.of(page, 12, Sort.by("createdDate").descending());
+        Page<ArticleEntity> result = articleRepository.findAllByCategoryId(pageable, size, categoryId);
+
+        List<ArticleShortInfoDto> dtos = new LinkedList<>();
+        result.getContent().forEach(entity -> dtos.add(toShortDtoFromEntity(entity)));
+        return new PageImpl<>(dtos, pageable, result.getTotalElements());
+    }
 }
