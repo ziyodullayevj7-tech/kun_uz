@@ -40,3 +40,6 @@ Content-Type: application/json
   "articleId": 2,
   "status": "PUBLISHED"
 }
+
+### pagination by section id
+GET localhost:8081/article/pagination-by-section-id/2?page=1&size=1

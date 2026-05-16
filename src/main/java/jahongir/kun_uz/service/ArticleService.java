@@ -1,16 +1,17 @@
 package jahongir.kun_uz.service;
 
 import jahongir.kun_uz.dto.article.ArticleDto;
+import jahongir.kun_uz.dto.article.ArticleShortInfoDto;
 import jahongir.kun_uz.dto.article.ArticleStatusDto;
 import jahongir.kun_uz.dto.article.ArticleUpdateDto;
 import jahongir.kun_uz.entity.ArticleEntity;
 import jahongir.kun_uz.entity.CategoryEntity;
 import jahongir.kun_uz.entity.SectionEntity;
-import jahongir.kun_uz.enums.ArticleStatus;
 import jahongir.kun_uz.exp.AppBadException;
 import jahongir.kun_uz.repository.ArticleRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -113,5 +114,23 @@ public class ArticleService {
             throw new AppBadException("Article not found");
         }
         return optional.get();
+    }
+
+    public PageImpl<ArticleShortInfoDto> paginationBySectionId(int page, int size, Integer sectionId) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Page<ArticleEntity> result = articleRepository.findAllBySectionId(pageable, sectionId);
+
+        List<ArticleShortInfoDto> dtos = new LinkedList<>();
+        result.getContent().forEach(entity -> dtos.add(toShortDtoFromEntity(entity)));
+        return new PageImpl<>(dtos, pageable, result.getTotalElements());
+    }
+
+    public ArticleShortInfoDto toShortDtoFromEntity(ArticleEntity entity){
+        ArticleShortInfoDto dto = new ArticleShortInfoDto();
+        dto.setId(entity.getId());
+        dto.setTitle(entity.getTitle());
+        dto.setContent(entity.getContent());
+        dto.setDescription(entity.getDescription());
+        return dto;
     }
 }

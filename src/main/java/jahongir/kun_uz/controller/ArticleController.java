@@ -1,12 +1,16 @@
 package jahongir.kun_uz.controller;
 
 import jahongir.kun_uz.dto.article.ArticleDto;
+import jahongir.kun_uz.dto.article.ArticleShortInfoDto;
 import jahongir.kun_uz.dto.article.ArticleStatusDto;
 import jahongir.kun_uz.dto.article.ArticleUpdateDto;
 import jahongir.kun_uz.enums.ArticleStatus;
 import jahongir.kun_uz.service.ArticleService;
+import jahongir.kun_uz.service.ProfileService;
+import jahongir.kun_uz.util.PageUtil;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 public class ArticleController {
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private ProfileService profileService;
 
     @PostMapping("")
     public ResponseEntity<ArticleDto> create(@Valid @RequestBody ArticleDto dto){
@@ -40,5 +46,13 @@ public class ArticleController {
     @PutMapping("/change-status")
     public ResponseEntity<Boolean> changeStatusById(@RequestBody ArticleStatusDto dto){
         return ResponseEntity.ok(articleService.changeStatusById(dto));
+    }
+
+    @GetMapping("/pagination-by-section-id/{sectionId}")
+    public ResponseEntity<PageImpl<ArticleShortInfoDto>> paginationBySectionId(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @PathVariable Integer sectionId){
+        return ResponseEntity.ok(articleService.paginationBySectionId(PageUtil.page(page), size, sectionId));
     }
 }
