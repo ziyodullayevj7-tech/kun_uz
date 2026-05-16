@@ -1,9 +1,6 @@
 package jahongir.kun_uz.controller;
 
-import jahongir.kun_uz.dto.article.ArticleDto;
-import jahongir.kun_uz.dto.article.ArticleShortInfoDto;
-import jahongir.kun_uz.dto.article.ArticleStatusDto;
-import jahongir.kun_uz.dto.article.ArticleUpdateDto;
+import jahongir.kun_uz.dto.article.*;
 import jahongir.kun_uz.enums.ArticleStatus;
 import jahongir.kun_uz.service.ArticleService;
 import jahongir.kun_uz.service.ProfileService;
@@ -54,5 +51,12 @@ public class ArticleController {
             @RequestParam(value = "size", defaultValue = "10") int size,
             @PathVariable Integer sectionId){
         return ResponseEntity.ok(articleService.paginationBySectionId(PageUtil.page(page), size, sectionId));
+    }
+
+    @GetMapping("/pagination-except-ids/")
+    public ResponseEntity<PageImpl<ArticleShortInfoDto>> paginationExceptForIds(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestBody ArticleExceptIdsDto dto){
+        return ResponseEntity.ok(articleService.paginationExceptForIds(PageUtil.page(page), dto));
     }
 }

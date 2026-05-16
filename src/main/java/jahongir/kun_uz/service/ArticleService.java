@@ -1,9 +1,6 @@
 package jahongir.kun_uz.service;
 
-import jahongir.kun_uz.dto.article.ArticleDto;
-import jahongir.kun_uz.dto.article.ArticleShortInfoDto;
-import jahongir.kun_uz.dto.article.ArticleStatusDto;
-import jahongir.kun_uz.dto.article.ArticleUpdateDto;
+import jahongir.kun_uz.dto.article.*;
 import jahongir.kun_uz.entity.ArticleEntity;
 import jahongir.kun_uz.entity.CategoryEntity;
 import jahongir.kun_uz.entity.SectionEntity;
@@ -132,5 +129,14 @@ public class ArticleService {
         dto.setContent(entity.getContent());
         dto.setDescription(entity.getDescription());
         return dto;
+    }
+
+    public PageImpl<ArticleShortInfoDto> paginationExceptForIds(int page, ArticleExceptIdsDto dto) {
+        Pageable pageable = PageRequest.of(page, 12, Sort.by("createdDate").descending());
+        Page<ArticleEntity> result = articleRepository.findAllExceptIds(pageable, dto.getIds());
+
+        List<ArticleShortInfoDto> dtos = new LinkedList<>();
+        result.getContent().forEach(entity -> dtos.add(toShortDtoFromEntity(entity)));
+        return new PageImpl<>(dtos, pageable, result.getTotalElements());
     }
 }

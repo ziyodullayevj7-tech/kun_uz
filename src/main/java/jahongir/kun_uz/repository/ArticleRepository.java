@@ -7,9 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.List;
+
 
 public interface ArticleRepository extends CrudRepository<ArticleEntity, Integer>, PagingAndSortingRepository<ArticleEntity, Integer> {
 
     @Query("select a from ArticleEntity as a inner join a.sections as s where s.id =:sectionId")
     Page<ArticleEntity> findAllBySectionId(Pageable pageable, Integer sectionId);
+
+    @Query("from ArticleEntity as a where a.id not in :ids")
+    Page<ArticleEntity> findAllExceptIds(Pageable pageable, List<Integer> ids);
 }
