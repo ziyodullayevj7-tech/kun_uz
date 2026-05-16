@@ -7,39 +7,44 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "profile")
 public class ProfileEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column
+    @Column(name = "surname", nullable = false)
     private String surname;
 
-    @Column
+    @Column(name = "username", nullable = false)
     private String username;
 
-    @Column
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column(name = "visible")
-    private Boolean visible = Boolean.TRUE;
+    @Column(name = "photo_id")
+    private String photoId;
 
-    @Column(name = "created_date")
+    @Column(name = "visible", nullable = false)
+    private Boolean visible = true;
+
     @CreationTimestamp
-    private LocalDate created_date;
+    @Column(name = "created_date")
+    private LocalDate createdDate;
 
-    @Column
-    private String photo_id;
+    @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY)
+    private List<ProfileRoleEntity> roleList;
 }

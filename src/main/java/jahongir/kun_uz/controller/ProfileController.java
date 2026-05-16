@@ -1,14 +1,13 @@
 package jahongir.kun_uz.controller;
 
-import jahongir.kun_uz.dto.ProfileDto;
-import jahongir.kun_uz.dto.ProfileRoleDto;
-import jahongir.kun_uz.exp.ItemNotFoundException;
+import jahongir.kun_uz.dto.profile.*;
 import jahongir.kun_uz.service.ProfileService;
+import jahongir.kun_uz.util.PageUtil;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/profile")
@@ -17,44 +16,49 @@ public class ProfileController {
     private ProfileService profileService;
 
     @PostMapping("")
-    public ResponseEntity<ProfileDto> create(@RequestBody ProfileDto dto){
-        ProfileDto result = profileService.create(dto);
-        return ResponseEntity.ok(result);
+    public ResponseEntity<ProfileDto> create(@Valid @RequestBody ProfileDto dto) {
+        return ResponseEntity.ok(profileService.create(dto));
     }
 
-    @GetMapping("")
-    public ResponseEntity<List<ProfileDto>> getAll(){
-        List<ProfileDto> result = profileService.getAll();
-        return ResponseEntity.ok(result);
+    @PutMapping("/{id}")
+    public ResponseEntity<ProfileDto> update(@PathVariable("id") Integer id,
+                                             @Valid @RequestBody ProfileUpdateDto dto) {
+        return ResponseEntity.ok(profileService.update(id, dto));
     }
 
-    @PutMapping("/udpate/{id}")
-    public ResponseEntity<Boolean> update(@RequestBody ProfileDto dto,
-                                          @PathVariable Integer id){
-        Boolean result = profileService.update(dto, id);
-        return ResponseEntity.ok(result);
+    @GetMapping("/{id}")
+    public ResponseEntity<ProfileDto> byId(@PathVariable("id") Integer id) {
+        return ResponseEntity.ok(profileService.getDtoById(id));
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Boolean> delete(@PathVariable Integer id){
-        Boolean result = profileService.delete(id);
-        return ResponseEntity.ok(result);
+    @PutMapping("/detail")
+    public ResponseEntity<ProfileDto> updateDetail(
+            @RequestHeader("ProfileId") Integer currentProfileId,
+            @Valid @RequestBody ProfileUpdateDetailDto dto) {
+        return ResponseEntity.ok(profileService.updateDetail(currentProfileId, dto));
     }
 
-    @ExceptionHandler({IllegalArgumentException.class, ItemNotFoundException.class})
-    public ResponseEntity<String> handle(RuntimeException e){
-        return ResponseEntity.badRequest().body(e.getMessage());
+    @GetMapping("/pagination")
+    public ResponseEntity<PageImpl<ProfileDto>> pagination(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size){
+        return ResponseEntity.ok(profileService.pagination(PageUtil.page(page), size));
     }
 
-    @GetMapping("/get-by-id/{id}")
-    public ResponseEntity<ProfileDto> getById(@PathVariable Integer id){
-        ProfileDto result = profileService.getById(id);
-        return ResponseEntity.ok(result);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Boolean> deleteById(@PathVariable("id") Integer id){
+        return ResponseEntity.ok(profileService.deleteById(id));
     }
 
-    @GetMapping("/get-by-id/{name}")
-    public ResponseEntity<List<ProfileRoleDto>> getById(@PathVariable String name){
-        List<ProfileRoleDto> result = profileService.getByName(name);
-        return ResponseEntity.ok(result);
+    @PutMapping("/photo")
+    public ResponseEntity<Boolean> updatePhotoId(@RequestHeader("ProfileId") Integer currentProfileId,
+                                                 @Valid @RequestBody ProfileUpdatePhototDto dto){
+        return ResponseEntity.ok(profileService.updatePhotoId(currentProfileId, dto));
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<Boolean> password(@RequestHeader("ProfileId") Integer currenProfileId,
+                                            @Valid @RequestBody ProfileUpdatePasswordDto dto){
+        return ResponseEntity.ok(profileService.updatePassword(currenProfileId, dto));
     }
 }

@@ -14,13 +14,16 @@ public class ProfileRoleEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column
+    @Column(name = "profile_id")
+    private Integer profileId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profile_id", insertable = false, updatable = false, nullable = false)
+    ProfileEntity profile;
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "roles")
     private Roles role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id")
-    ProfileEntity profile;
 
     @Column(name = "visible")
     private Boolean visible = Boolean.TRUE;

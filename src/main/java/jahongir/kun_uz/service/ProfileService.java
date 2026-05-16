@@ -1,105 +1,128 @@
 package jahongir.kun_uz.service;
 
-import jahongir.kun_uz.dto.ProfileDto;
-import jahongir.kun_uz.dto.ProfileRoleDto;
+import jahongir.kun_uz.dto.profile.*;
 import jahongir.kun_uz.entity.ProfileEntity;
 import jahongir.kun_uz.enums.Status;
-import jahongir.kun_uz.mapper.ProfileRoleMapper;
+import jahongir.kun_uz.exp.AppBadException;
 import jahongir.kun_uz.repository.ProfileRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProfileService {
     @Autowired
     private ProfileRepository profileRepository;
-    @Autowired ProfileRoleService profileRoleService;
+    @Autowired
+    private ProfileRoleService profileRoleService;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public ProfileDto create(ProfileDto dto) {
+    public ProfileDto create(ProfileDto dto){
+        Optional<ProfileEntity> optional = profileRepository.findByUsernameAndVisibleIsTrue(dto.getUsername());
+        if (optional.isPresent()){
+            throw new AppBadException("User exists");
+        }
         ProfileEntity entity = new ProfileEntity();
         entity.setName(dto.getName());
         entity.setSurname(dto.getSurname());
-        entity.setStatus(Status.ACTIVE);
-        entity.setPassword(dto.getPassword());
+
+        entity.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
         entity.setUsername(dto.getUsername());
-        entity.setCreated_date(LocalDate.now());
-        entity.setPhoto_id(UUID.randomUUID().toString());
-
+        entity.setStatus(Status.ACTIVE);
+        entity.setVisible(Boolean.TRUE);
         profileRepository.save(entity);
-        profileRoleService.createByProfileAndRoles(entity, dto.getRoles());
-        dto.setId(entity.getId());
-        dto.setPhoto_id(entity.getPhoto_id());
-        dto.setVisible(entity.getVisible());
-        dto.setStatus(entity.getStatus());
-        return dto;
+
+        profileRoleService.create(entity.getId(), dto.getRoles());
+        return toDtoFromEntity(entity);
     }
 
-    public List<ProfileDto> getAll() {
-        List<ProfileEntity> entities = profileRepository.geAll();
-        List<ProfileDto> dtos = new LinkedList<>();
-        entities.forEach(entity -> {
-            ProfileDto dto = toDto(entity);
-            dtos.add(dto);
-        });
-        return dtos;
-    }
-
-    public ProfileDto toDto(ProfileEntity entity){
+    public ProfileDto toDtoFromEntity(ProfileEntity entity){
         ProfileDto dto = new ProfileDto();
         dto.setId(entity.getId());
         dto.setName(entity.getName());
         dto.setSurname(entity.getSurname());
-        dto.setPassword(entity.getPassword());
-        dto.setStatus(entity.getStatus());
-        dto.setPhoto_id(entity.getPhoto_id());
         dto.setUsername(entity.getUsername());
+        dto.setCreatedDate(entity.getCreatedDate());
         return dto;
     }
 
-    public Boolean update(ProfileDto dto, Integer id) {
-        Optional<ProfileEntity> optional = profileRepository.findById(id);
-        if (optional.isEmpty()){
-            return false;
+    public ProfileDto update(Integer id, ProfileUpdateDto dto){
+        ProfileEntity entity = getEntityById(id);
+        Optional<ProfileEntity> optional = profileRepository.findByUsernameAndVisibleIsTrue(dto.getUsername());
+        if (optional.isPresent()){
+            throw new AppBadException("Username already exists");
         }
-        ProfileEntity entity = optional.get();
+
         entity.setName(dto.getName());
         entity.setSurname(dto.getSurname());
         entity.setUsername(dto.getUsername());
-        entity.setPassword(dto.getPassword());
-        entity.setPhoto_id(dto.getPhoto_id());
-        profileRoleService.update(dto.getRoles(), entity);
+        profileRepository.save(entity);
+        //role_save
+        profileRoleService.merge(entity.getId(), dto.getRolesList());
+        //result
+        ProfileDto response = toDtoFromEntity(entity);
+        response.setRoles(dto.getRolesList());
+        return response;
+    }
+
+    public ProfileEntity getEntityById(Integer id){
+        return profileRepository.findByIdAndVisibleIsTrue(id).orElseThrow(() -> new AppBadException("Profile not found"));
+    }
+
+    public ProfileDto getDtoById(Integer id) {
+        ProfileEntity entity = getEntityById(id);
+        ProfileDto dto = toDtoFromEntity(entity);
+        dto.setRoles(profileRoleService.getByProfileId(id));
+        return dto;
+    }
+
+    public ProfileDto updateDetail(Integer currentProfileId, @Valid ProfileUpdateDetailDto dto) {
+        ProfileEntity entity = getEntityById(currentProfileId);
+        entity.setName(dto.getName());
+        entity.setSurname(dto.getSurname());
+        profileRepository.save(entity);
+        return toDtoFromEntity(entity);
+    }
+
+    public PageImpl<ProfileDto> pagination(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
+        Page<ProfileEntity> result = profileRepository.findAllWithRoles(pageable);
+
+        List<ProfileDto> dtoList = new LinkedList<>();
+        for (ProfileEntity entity : result.getContent()) {
+            dtoList.add(toDtoFromEntity(entity));
+        }
+        return new PageImpl<>(dtoList, pageable, result.getTotalElements());
+    }
+
+    public Boolean deleteById(Integer id) {
+        ProfileEntity entity = getEntityById(id);
+        entity.setVisible(false);
         profileRepository.save(entity);
         return true;
     }
 
-    public Boolean delete(Integer id) {
-        Optional<ProfileEntity> optional = profileRepository.findById(id);
-        if (optional.isEmpty()){
-            return false;
-        }
-        ProfileEntity entity = optional.get();
-        entity.setVisible(Boolean.FALSE);
-        profileRoleService.deleteByProfileId(id);
+    public Boolean updatePhotoId(Integer currentProfileId, @Valid ProfileUpdatePhototDto dto) {
+        ProfileEntity entity = getEntityById(currentProfileId);
+        entity.setPhotoId(dto.getPhotoId());
         profileRepository.save(entity);
         return true;
     }
 
-    public ProfileDto getById(Integer id) {
-        Optional<ProfileEntity> optional = profileRepository.findById(id);
-        if (optional.isEmpty()){
-            throw new IllegalArgumentException("Profile not found with this id");
+    public Boolean updatePassword(Integer currenProfileId, @Valid ProfileUpdatePasswordDto dto) {
+        ProfileEntity entity = getEntityById(currenProfileId);
+        if (!bCryptPasswordEncoder.matches(dto.getCurrentPassword(), entity.getPassword())){
+            throw new AppBadException("Wrong password");
         }
-        return toDto(optional.get());
-    }
-
-    public List<ProfileRoleDto> getByName(String name) {
-        Optional<List<Integer>> optional = profileRepository.getIdByName(name);
-        if (optional.isEmpty()){
-            throw new IllegalArgumentException("No user found with this name");
-        }
-        return profileRoleService.getListByProfileId(optional.get());
+        entity.setPassword(bCryptPasswordEncoder.encode(dto.getNewPassword()));
+        profileRepository.save(entity);
+        return true;
     }
 }
