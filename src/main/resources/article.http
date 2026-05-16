@@ -14,3 +14,17 @@ Content-Type: application/json
 
 ### get by id
 GET localhost:8081/article/3
+
+### update by id
+PUT localhost:8081/article/2
+Content-Type: application/json
+
+{
+  "title": "Java",
+  "content": "Programming language",
+  "description": "Learning with ai",
+  "imageId": 5,
+  "regionId": 1,
+  "sectionIds": [1],
+  "categoryIds": [2]
+}

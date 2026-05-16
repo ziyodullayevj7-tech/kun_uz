@@ -1,4 +1,4 @@
-package jahongir.kun_uz.dto;
+package jahongir.kun_uz.dto.article;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;

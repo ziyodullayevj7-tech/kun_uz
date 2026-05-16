@@ -1,6 +1,7 @@
 package jahongir.kun_uz.service;
 
-import jahongir.kun_uz.dto.ArticleDto;
+import jahongir.kun_uz.dto.article.ArticleDto;
+import jahongir.kun_uz.dto.article.ArticleUpdateDto;
 import jahongir.kun_uz.entity.ArticleEntity;
 import jahongir.kun_uz.entity.CategoryEntity;
 import jahongir.kun_uz.entity.SectionEntity;
@@ -67,6 +68,26 @@ public class ArticleService {
         entity.getSections().forEach(section -> sectionIds.add(section.getId()));
         dto.setSectionIds(sectionIds);
 
+        return dto;
+    }
+
+    public ArticleUpdateDto update(Integer id, ArticleUpdateDto dto) {
+        Optional<ArticleEntity> optional = articleRepository.findById(id);
+        if (optional.isEmpty()){
+            throw new AppBadException("Article not found");
+        }
+        ArticleEntity entity = optional.get();
+        entity.setTitle(dto.getTitle());
+        entity.setDescription(dto.getDescription());
+        entity.setContent(dto.getContent());
+        entity.setImageId(dto.getImageId());
+        entity.setRegionId(dto.getRegionId());
+        List<CategoryEntity> categories = categoryService.getListById(dto.getCategoryIds());//get categories by ids
+        List<SectionEntity> sections = sectionService.getListById(dto.getSectionIds());//get sections by ids
+
+        entity.setCategories(categories);//set found categories
+        entity.setSections(sections);//set found sections
+        articleRepository.save(entity);
         return dto;
     }
 }
