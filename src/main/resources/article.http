@@ -1,0 +1,16 @@
+### create
+POST localhost:8081/article
+Content-Type: application/json
+
+{
+  "title": "lkdfsjg",
+  "content": "sdgdsfg",
+  "description": "sdgsdsdg",
+  "imageId": 3,
+  "regionId": 1,
+  "categoryIds": [1, 2],
+  "sectionIds": [1, 2]
+}
+
+### get by id
+GET localhost:8081/article/3

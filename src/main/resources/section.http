@@ -1,0 +1,11 @@
+### create
+POST localhost:8081/section
+Content-Type: application/json
+
+{
+  "orderNumber": "1234",
+  "nameUz": "sdgssdgs",
+  "nameRu": "sdgsdgsd",
+  "nameEn": "shdfgsdgh",
+  "key": "sdgs43"
+}

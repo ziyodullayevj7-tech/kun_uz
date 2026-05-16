@@ -1,0 +1,11 @@
+### create
+POST localhost:8081/category
+Content-Type: application/json
+
+{
+  "key": "sdgwef435",
+  "nameEn": "sdgsdgsdf",
+  "nameRu": "sdgsetgsf",
+  "nameUz": "sdhyrwgsg",
+  "orderNumber": "34tsdgsg"
+}

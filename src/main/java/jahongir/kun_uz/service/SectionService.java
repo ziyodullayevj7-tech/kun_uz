@@ -3,6 +3,7 @@ package jahongir.kun_uz.service;
 import jahongir.kun_uz.dto.CategoryByLangDto;
 import jahongir.kun_uz.dto.SectionDto;
 import jahongir.kun_uz.entity.SectionEntity;
+import jahongir.kun_uz.exp.AppBadException;
 import jahongir.kun_uz.mapper.RegionMapper;
 import jahongir.kun_uz.repository.SectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,5 +107,17 @@ public class SectionService {
             });
         }
         return dtos;
+    }
+
+    public List<SectionEntity> getListById(List<Integer> sectionIds) {
+        List<SectionEntity> sections = new LinkedList<>();
+        sectionIds.forEach(id -> {
+            Optional<SectionEntity> optional = sectionRepository.findById(id);
+            optional.ifPresent(sections::add);
+        });
+        if (sections.isEmpty()){
+            throw new AppBadException("No section found");
+        }
+        return sections;
     }
 }

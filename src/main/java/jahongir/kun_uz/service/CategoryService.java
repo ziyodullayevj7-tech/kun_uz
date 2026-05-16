@@ -3,6 +3,7 @@ package jahongir.kun_uz.service;
 import jahongir.kun_uz.dto.CategoryByLangDto;
 import jahongir.kun_uz.dto.CategoryDto;
 import jahongir.kun_uz.entity.CategoryEntity;
+import jahongir.kun_uz.exp.AppBadException;
 import jahongir.kun_uz.mapper.RegionMapper;
 import jahongir.kun_uz.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,5 +106,17 @@ public class CategoryService {
             });
         }
         return dtos;
+    }
+
+    public List<CategoryEntity> getListById(List<Integer> categoryIds) {
+        List<CategoryEntity> categories = new LinkedList<>();
+        categoryIds.forEach(id -> {
+            Optional<CategoryEntity> optional = categoryRepository.findById(id);
+            optional.ifPresent(categories::add);
+        });
+        if (categories.isEmpty()){
+            throw new AppBadException("No category found");
+        }
+        return categories;
     }
 }
