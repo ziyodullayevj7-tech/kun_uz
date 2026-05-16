@@ -67,4 +67,12 @@ public class ArticleController {
             @PathVariable Integer categoryId){
         return ResponseEntity.ok(articleService.paginationByCategoryId(PageUtil.page(page), size, categoryId));
     }
+
+    @GetMapping("/pagination-by-regiod-id/{regionId}")
+    public ResponseEntity<PageImpl<ArticleShortInfoDto>> paginationByRegionId(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @PathVariable Integer regionId){
+        return ResponseEntity.ok(articleService.paginationByRegionId(PageUtil.page(page), size, regionId));
+    }
 }

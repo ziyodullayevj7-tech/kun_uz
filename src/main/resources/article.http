@@ -52,5 +52,8 @@ Content-Type: application/json
   "ids": [2]
 }
 
-### pagination by bategory id
+### pagination by category id
 GET localhost:8081/article/pagination-by-category-id/1
+
+### pagination by region id
+GET localhost:8081/article/pagination-by-regiod-id/1
