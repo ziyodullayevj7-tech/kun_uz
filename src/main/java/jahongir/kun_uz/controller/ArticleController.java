@@ -1,7 +1,9 @@
 package jahongir.kun_uz.controller;
 
 import jahongir.kun_uz.dto.article.ArticleDto;
+import jahongir.kun_uz.dto.article.ArticleStatusDto;
 import jahongir.kun_uz.dto.article.ArticleUpdateDto;
+import jahongir.kun_uz.enums.ArticleStatus;
 import jahongir.kun_uz.service.ArticleService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +35,10 @@ public class ArticleController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteById(@PathVariable Integer id){
         return ResponseEntity.ok(articleService.deleteById(id));
+    }
+
+    @PutMapping("/change-status")
+    public ResponseEntity<Boolean> changeStatusById(@RequestBody ArticleStatusDto dto){
+        return ResponseEntity.ok(articleService.changeStatusById(dto));
     }
 }

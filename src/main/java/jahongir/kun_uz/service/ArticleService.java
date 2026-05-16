@@ -1,10 +1,12 @@
 package jahongir.kun_uz.service;
 
 import jahongir.kun_uz.dto.article.ArticleDto;
+import jahongir.kun_uz.dto.article.ArticleStatusDto;
 import jahongir.kun_uz.dto.article.ArticleUpdateDto;
 import jahongir.kun_uz.entity.ArticleEntity;
 import jahongir.kun_uz.entity.CategoryEntity;
 import jahongir.kun_uz.entity.SectionEntity;
+import jahongir.kun_uz.enums.ArticleStatus;
 import jahongir.kun_uz.exp.AppBadException;
 import jahongir.kun_uz.repository.ArticleRepository;
 import jakarta.validation.Valid;
@@ -42,11 +44,8 @@ public class ArticleService {
     }
 
     public ArticleDto getById(Integer articleId) {
-        Optional<ArticleEntity> optional = articleRepository.findById(articleId);
-        if (optional.isEmpty()){
-            throw new AppBadException("Article not found");
-        }
-        return toDtoFromEntity(optional.get());
+        ArticleEntity entity = findArticleById(articleId);
+        return toDtoFromEntity(entity);
     }
 
     public ArticleDto toDtoFromEntity(ArticleEntity entity){
@@ -72,11 +71,7 @@ public class ArticleService {
     }
 
     public ArticleUpdateDto update(Integer id, ArticleUpdateDto dto) {
-        Optional<ArticleEntity> optional = articleRepository.findById(id);
-        if (optional.isEmpty()){
-            throw new AppBadException("Article not found");
-        }
-        ArticleEntity entity = optional.get();
+        ArticleEntity entity = findArticleById(id);
         entity.setTitle(dto.getTitle());
         entity.setDescription(dto.getDescription());
         entity.setContent(dto.getContent());
@@ -100,5 +95,23 @@ public class ArticleService {
         entity.setVisible(false);
         articleRepository.save(entity);
         return true;
+    }
+
+    public Boolean changeStatusById(ArticleStatusDto dto) {
+        ArticleEntity entity = findArticleById(dto.getArticleId());
+        if (entity.getVisible().equals(true)){
+            entity.setStatus(dto.getStatus());
+            articleRepository.save(entity);
+            return true;
+        }
+        return false;
+    }
+
+    public ArticleEntity findArticleById(Integer id){
+        Optional<ArticleEntity> optional = articleRepository.findById(id);
+        if (optional.isEmpty()){
+            throw new AppBadException("Article not found");
+        }
+        return optional.get();
     }
 }

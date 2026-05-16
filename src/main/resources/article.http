@@ -31,3 +31,12 @@ Content-Type: application/json
 
 ### delete by id
 DELETE localhost:8081/article/5
+
+### change status
+PUT localhost:8081/article/change-status
+Content-Type: application/json
+
+{
+  "articleId": 2,
+  "status": "PUBLISHED"
+}
