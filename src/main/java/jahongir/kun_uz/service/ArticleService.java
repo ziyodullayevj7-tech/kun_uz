@@ -90,4 +90,15 @@ public class ArticleService {
         articleRepository.save(entity);
         return dto;
     }
+
+    public Boolean deleteById(Integer id) {
+        Optional<ArticleEntity> optional = articleRepository.findById(id);
+        if (optional.isEmpty()){
+            throw new AppBadException("Article not found");
+        }
+        ArticleEntity entity = optional.get();
+        entity.setVisible(false);
+        articleRepository.save(entity);
+        return true;
+    }
 }

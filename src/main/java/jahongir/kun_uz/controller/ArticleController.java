@@ -29,4 +29,9 @@ public class ArticleController {
                                                    @RequestBody ArticleUpdateDto dto){
         return ResponseEntity.ok(articleService.update(id, dto));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Boolean> deleteById(@PathVariable Integer id){
+        return ResponseEntity.ok(articleService.deleteById(id));
+    }
 }

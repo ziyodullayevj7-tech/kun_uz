@@ -28,3 +28,6 @@ Content-Type: application/json
   "sectionIds": [1],
   "categoryIds": [2]
 }
+
+### delete by id
+DELETE localhost:8081/article/5
