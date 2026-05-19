@@ -1,6 +1,7 @@
 package jahongir.kun_uz.repository;
 
 import jahongir.kun_uz.entity.ProfileEntity;
+import jahongir.kun_uz.enums.Status;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Page;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
@@ -21,4 +23,7 @@ public interface ProfileRepository extends CrudRepository<ProfileEntity, Integer
 
     @Query("from ProfileEntity as p inner join fetch p.roleList where p.visible is true ")
     Page<ProfileEntity> findAllWithRoles(Pageable pageable);
+
+    @Query("from ProfileEntity where status = 'INACTIVE' and visible is true and username like :username")
+    Optional<ProfileEntity> findInActiveByUserName(String username);
 }

@@ -2,7 +2,6 @@ package jahongir.kun_uz.controller;
 
 import jahongir.kun_uz.dto.CategoryByLangDto;
 import jahongir.kun_uz.dto.SectionDto;
-import jahongir.kun_uz.exp.ItemNotFoundException;
 import jahongir.kun_uz.service.SectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +19,6 @@ public class SectionController {
     public ResponseEntity<SectionDto> create(@RequestBody SectionDto dto){
         SectionDto result = sectionService.create(dto);
         return ResponseEntity.ok(result);
-    }
-
-    @ExceptionHandler({IllegalArgumentException.class, ItemNotFoundException.class})
-    public ResponseEntity<String> handle(RuntimeException e){
-        return ResponseEntity.badRequest().body(e.getMessage());
     }
 
     @PutMapping("/update/{id}")

@@ -2,6 +2,7 @@ package jahongir.kun_uz.controller;
 
 import jahongir.kun_uz.dto.auth.AuthorizationDto;
 import jahongir.kun_uz.dto.auth.RegistrationDto;
+import jahongir.kun_uz.dto.auth.RegistrationResendDto;
 import jahongir.kun_uz.dto.profile.ProfileDto;
 import jahongir.kun_uz.service.AuthService;
 import jakarta.validation.Valid;
@@ -28,5 +29,10 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ProfileDto> login(@Valid @RequestBody AuthorizationDto dto){
         return ResponseEntity.ok(authService.login(dto));
+    }
+
+    @GetMapping("/registration//resend")
+    public ResponseEntity<String> registration(@RequestBody RegistrationResendDto dto){
+        return ResponseEntity.ok(authService.regResend(dto));
     }
 }

@@ -1,6 +1,7 @@
 package jahongir.kun_uz.service;
 
 import jahongir.kun_uz.dto.auth.AuthorizationDto;
+import jahongir.kun_uz.dto.auth.RegistrationResendDto;
 import jahongir.kun_uz.dto.profile.ProfileDto;
 import jahongir.kun_uz.dto.auth.RegistrationDto;
 import jahongir.kun_uz.entity.ProfileEntity;
@@ -84,6 +85,9 @@ public class AuthService {
         if (!bCryptPasswordEncoder.matches(dto.getPassword(), entity.getPassword())){
             throw new AppBadException("Username or password is wrong");
         }
+        if (!entity.getStatus().equals(Status.ACTIVE)){
+            throw new AppBadException("Status is not active");
+        }
         ProfileDto response = new ProfileDto();
         response.setId(entity.getId());
         response.setName(entity.getName());
@@ -91,5 +95,15 @@ public class AuthService {
         response.setUsername(entity.getUsername());
         response.setRoles(profileRoleService.getByProfileId(entity.getId()));
         return response;
+    }
+
+
+    public String regResend(RegistrationResendDto dto) {
+        Optional<ProfileEntity> optional = profileRepository.findInActiveByUserName(dto.getUsername());
+        if (optional.isEmpty()){
+            throw new AppBadException("The user is not incomplete session");
+        }
+        emailSenderService.sendRegistrationStyledEmail(dto.getUsername());
+        return "Code has been sent to you via email";
     }
 }
