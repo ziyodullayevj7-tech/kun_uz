@@ -39,4 +39,8 @@ public class ProfileRoleService {
     public List<Roles> getByProfileId(Integer id) {
         return profileRoleRepository.getRoleListByProfileId(id);
     }
+
+    public void deleteRolesByProfileId(Integer id) {
+        profileRoleRepository.deleteByProfileId(id);
+    }
 }

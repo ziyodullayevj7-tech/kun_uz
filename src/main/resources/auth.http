@@ -1,0 +1,13 @@
+### register
+POST localhost:8081/auth/registration
+Content-Type: application/json
+
+{
+  "username": "jahongirdeveloper6@gmail.com",
+  "password": "jahongir2006",
+  "surname": "Ziyodullayev",
+  "name": "Jahongir"
+}
+
+### confirm
+GET localhost:8081/auth/registration/email/verification/jahongirdeveloper6@gmail.com/84991

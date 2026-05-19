@@ -2,6 +2,7 @@ package jahongir.kun_uz.repository;
 
 import jahongir.kun_uz.entity.ProfileRoleEntity;
 import jahongir.kun_uz.enums.Roles;
+import jakarta.transaction.TransactionScoped;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,9 @@ public interface ProfileRoleRepository extends CrudRepository<ProfileRoleEntity,
     @Modifying
     @Query("DELETE from ProfileRoleEntity where profile.id =:id and role =:role")
     void deleteByIdAndRole(Integer id, Roles role);
+
+    @Transactional
+    @Modifying
+    @Query("delete from ProfileRoleEntity as pr where pr.profile.id =:id ")
+    void deleteByProfileId(Integer id);
 }
