@@ -1,11 +1,15 @@
 package jahongir.kun_uz.service;
 
+import jahongir.kun_uz.dto.EmailHistoryResponseDto;
 import jahongir.kun_uz.entity.EmailHistoryEntity;
+import jahongir.kun_uz.exp.AppBadException;
 import jahongir.kun_uz.repository.EmailHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,5 +44,20 @@ public class EmailHistoryService {
         return true;
     }
 
-
+    public List<EmailHistoryResponseDto> getEmailHistoryByEmail(String email){
+        Optional<List<EmailHistoryEntity>> optional = emailHistoryRepository.getEmailHistoryEntitiesByToAccount(email);
+        if (optional.isEmpty()){
+            throw new AppBadException("No history is found with this email");
+        }
+        List<EmailHistoryResponseDto> response = new LinkedList<>();
+        optional.get().forEach(entity -> {
+            EmailHistoryResponseDto dto = new EmailHistoryResponseDto();
+            dto.setId(entity.getId());
+            dto.setEmail(entity.getToAccount());
+            dto.setBody(entity.getBody());
+            dto.setCreatedDateAndTime(entity.getCreatedDateAndTime());
+            response.add(dto);
+        });
+        return response;
+    }
 }

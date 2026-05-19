@@ -97,7 +97,6 @@ public class AuthService {
         return response;
     }
 
-
     public String regResend(RegistrationResendDto dto) {
         Optional<ProfileEntity> optional = profileRepository.findInActiveByUserName(dto.getUsername());
         if (optional.isEmpty()){
