@@ -5,8 +5,10 @@ import jahongir.kun_uz.entity.EmailHistoryEntity;
 import jahongir.kun_uz.exp.AppBadException;
 import jahongir.kun_uz.repository.EmailHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,5 +61,42 @@ public class EmailHistoryService {
             response.add(dto);
         });
         return response;
+    }
+
+    public List<EmailHistoryResponseDto> getEmailHistoryByGivenDate(LocalDate date){
+        Optional<List<EmailHistoryEntity>> optional = emailHistoryRepository.getEmailHistoryEntitiesByGivenDate(date);
+        if (optional.isEmpty()){
+            throw new AppBadException("No history is found with this date");
+        }
+        List<EmailHistoryResponseDto> response = new LinkedList<>();
+        optional.get().forEach(entity -> {
+            EmailHistoryResponseDto dto = new EmailHistoryResponseDto();
+            dto.setId(entity.getId());
+            dto.setEmail(entity.getToAccount());
+            dto.setBody(entity.getBody());
+            dto.setCreatedDateAndTime(entity.getCreatedDateAndTime());
+            response.add(dto);
+        });
+        return response;
+    }
+
+    public PageImpl<EmailHistoryResponseDto> pagination(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDateAndTime").descending());
+        Page<EmailHistoryEntity> result = emailHistoryRepository.findAll(pageable);
+
+        List<EmailHistoryResponseDto> dtos = new LinkedList<>();
+        for (EmailHistoryEntity entity : result.getContent()) {
+            dtos.add(toDtoFromEntity(entity));
+        }
+        return new PageImpl<>(dtos, pageable, result.getTotalElements());
+    }
+
+    public EmailHistoryResponseDto toDtoFromEntity(EmailHistoryEntity entity){
+        EmailHistoryResponseDto dto = new EmailHistoryResponseDto();
+        dto.setId(entity.getId());
+        dto.setEmail(entity.getToAccount());
+        dto.setBody(entity.getBody());
+        dto.setCreatedDateAndTime(entity.getCreatedDateAndTime());
+        return dto;
     }
 }

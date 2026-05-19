@@ -1,2 +1,8 @@
 ### get email history by email
 GET localhost:8081/email-history/get-email-history-by-email/foronlynetflix30@gmail.com
+
+### get email history by date
+GET localhost:8081/email-history/get-email-history-by-date?date=2026-05-19
+
+### get with pagination
+GET localhost:8081/email-history/pagination

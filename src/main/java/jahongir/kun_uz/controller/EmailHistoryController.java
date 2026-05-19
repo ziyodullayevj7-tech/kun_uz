@@ -2,13 +2,13 @@ package jahongir.kun_uz.controller;
 
 import jahongir.kun_uz.dto.EmailHistoryResponseDto;
 import jahongir.kun_uz.service.EmailHistoryService;
+import jahongir.kun_uz.util.PageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -20,5 +20,17 @@ public class EmailHistoryController {
     @GetMapping("/get-email-history-by-email/{email}")
     public ResponseEntity<List<EmailHistoryResponseDto>> getEmailHistoryByEmail(@PathVariable String email){
         return ResponseEntity.ok(emailHistoryService.getEmailHistoryByEmail(email));
+    }
+
+    @GetMapping("/get-email-history-by-date")
+    public ResponseEntity<List<EmailHistoryResponseDto>> getEmailHistoryByEmail(@RequestParam LocalDate date){
+        return ResponseEntity.ok(emailHistoryService.getEmailHistoryByGivenDate(date));
+    }
+
+    @GetMapping("/pagination")
+    public ResponseEntity<PageImpl<EmailHistoryResponseDto>> pagination(
+            @RequestParam(value = "apge", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size){
+        return ResponseEntity.ok(emailHistoryService.pagination(PageUtil.page(page), size));
     }
 }
