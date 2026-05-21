@@ -9,6 +9,7 @@ import jahongir.kun_uz.enums.Roles;
 import jahongir.kun_uz.enums.Status;
 import jahongir.kun_uz.exp.AppBadException;
 import jahongir.kun_uz.repository.ProfileRepository;
+import jahongir.kun_uz.service.sms.SmsSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,15 +29,17 @@ public class AuthService {
     private EmailSenderService emailSenderService;
     @Autowired
     private EmailHistoryService emailHistoryService;
+    @Autowired
+    private SmsSenderService smsSenderService;
 
-    public String registration(RegistrationDto dto){
+    public String registration(RegistrationDto dto) {
         Optional<ProfileEntity> optional = profileRepository.findByUsernameAndVisibleIsTrue(dto.getUsername());
-        if (optional.isPresent()){
+        if (optional.isPresent()) {
             ProfileEntity existsProfile = optional.get();
-            if (existsProfile.getStatus().equals(Status.INACTIVE)){
+            if (existsProfile.getStatus().equals(Status.INACTIVE)) {
                 profileRoleService.deleteRolesByProfileId(existsProfile.getId());
                 profileRepository.deleteById(existsProfile.getId());
-            }else {
+            } else {
                 throw new AppBadException("Username already exists");
             }
         }
@@ -51,24 +54,28 @@ public class AuthService {
         //create profile roles
         profileRoleService.merge(profile.getId(), List.of(Roles.USER));
         //send verification code
-        //email send
-        emailSenderService.sendRegistrationStyledEmail(profile.getUsername());
-        // send sms to phone
+        if (profile.getUsername().contains("@")) {
+            //email send
+            emailSenderService.sendRegistrationStyledEmail(profile.getUsername());
+        } else {
+            // send sms to phone
+            smsSenderService.sendRegistrationSms(profile.getUsername());
+        }
         // response
         return "Confirmation code has been sent";
     }
 
-    public String regEmailVerification(String username, Integer smsCode){
+    public String regEmailVerification(String username, Integer smsCode) {
         Optional<ProfileEntity> existOptional = profileRepository.findByUsernameAndVisibleIsTrue(username);
-        if (existOptional.isEmpty()){
+        if (existOptional.isEmpty()) {
             throw new AppBadException("Username not found");
         }
         ProfileEntity profile = existOptional.get();
-        if (!profile.getStatus().equals(Status.INACTIVE)){
+        if (!profile.getStatus().equals(Status.INACTIVE)) {
             throw new AppBadException("Username in wrong status");
         }
         // check sms code and time
-        if (emailHistoryService.isSmsSentToAccount(username, smsCode)){
+        if (emailHistoryService.isSmsSentToAccount(username, smsCode)) {
             profile.setStatus(Status.ACTIVE);
             profileRepository.save(profile);
             return "Verification successfully completed";
@@ -76,16 +83,16 @@ public class AuthService {
         throw new AppBadException("Not completed");
     }
 
-    public ProfileDto login(AuthorizationDto dto){
+    public ProfileDto login(AuthorizationDto dto) {
         Optional<ProfileEntity> optional = profileRepository.findByUsernameAndVisibleIsTrue(dto.getUsername());
-        if (optional.isEmpty()){
+        if (optional.isEmpty()) {
             throw new AppBadException("Username or password is wrong");
         }
         ProfileEntity entity = optional.get();
-        if (!bCryptPasswordEncoder.matches(dto.getPassword(), entity.getPassword())){
+        if (!bCryptPasswordEncoder.matches(dto.getPassword(), entity.getPassword())) {
             throw new AppBadException("Username or password is wrong");
         }
-        if (!entity.getStatus().equals(Status.ACTIVE)){
+        if (!entity.getStatus().equals(Status.ACTIVE)) {
             throw new AppBadException("Status is not active");
         }
         ProfileDto response = new ProfileDto();
@@ -99,7 +106,7 @@ public class AuthService {
 
     public String regResend(RegistrationResendDto dto) {
         Optional<ProfileEntity> optional = profileRepository.findInActiveByUserName(dto.getUsername());
-        if (optional.isEmpty()){
+        if (optional.isEmpty()) {
             throw new AppBadException("The user is not incomplete session");
         }
         emailSenderService.sendRegistrationStyledEmail(dto.getUsername());

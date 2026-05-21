@@ -1,0 +1,5 @@
+### get by phone
+GET localhost:8081/sms_controller/by-phone/
+
+### get by created date
+GET localhost:8081/sms_controller/list-by-created-date-time?createdDate=2026-05-21

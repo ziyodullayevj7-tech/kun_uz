@@ -5,4 +5,4 @@ GET localhost:8081/email-history/get-email-history-by-email/foronlynetflix30@gma
 GET localhost:8081/email-history/get-email-history-by-date?date=2026-05-19
 
 ### get with pagination
-GET localhost:8081/email-history/pagination
+GET localhost:8081/email-history/pagination?page=1&size=1

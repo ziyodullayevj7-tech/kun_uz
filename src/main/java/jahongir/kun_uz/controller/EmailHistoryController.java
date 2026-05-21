@@ -29,7 +29,7 @@ public class EmailHistoryController {
 
     @GetMapping("/pagination")
     public ResponseEntity<PageImpl<EmailHistoryResponseDto>> pagination(
-            @RequestParam(value = "apge", defaultValue = "1") int page,
+            @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size){
         return ResponseEntity.ok(emailHistoryService.pagination(PageUtil.page(page), size));
     }

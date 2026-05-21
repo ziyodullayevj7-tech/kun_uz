@@ -3,14 +3,14 @@ POST localhost:8081/auth/registration
 Content-Type: application/json
 
 {
-  "username": "foronlynetflix30@gmail.com",
+  "username": "jahongirz4774@gmail.com",
   "password": "jahongir2006",
   "surname": "Ziyodullayev",
   "name": "Jahongir"
 }
 
 ### confirm
-GET localhost:8081/auth/registration/email/verification/foronlynetflix30@gmail.com/71161
+GET localhost:8081/auth/registration/email/verification/jahongirz4774@gmail.com/046703
 
 ### login
 POST localhost:8081/auth/login
