@@ -2,7 +2,9 @@ package jahongir.kun_uz.controller;
 
 import jahongir.kun_uz.dto.sms.SmsHistoryResponseDto;
 import jahongir.kun_uz.service.sms.SmsHistoryService;
+import jahongir.kun_uz.util.PageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +25,16 @@ public class SmsHistoryController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("list-by-created-date-time")
+    @GetMapping("/list-by-created-date-time")
     public ResponseEntity<List<SmsHistoryResponseDto>> getByCreatedDateAndTime(@RequestParam LocalDate createdDate){
         List<SmsHistoryResponseDto> result = smsHistoryService.getByCreatedDate(createdDate);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/pagination")
+    public ResponseEntity<PageImpl<SmsHistoryResponseDto>> pagination(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size){
+        return ResponseEntity.ok(smsHistoryService.pagination(PageUtil.page(page), size));
     }
 }

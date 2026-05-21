@@ -28,5 +28,5 @@ public class SmsHistoryEntity {
     private Integer attemptCount = 0;
 
     @Column(name = "created_date")
-    private LocalDateTime createdDate;
+    private LocalDateTime createdDateAndTime;
 }
