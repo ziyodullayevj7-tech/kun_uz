@@ -35,4 +35,9 @@ public class AttachController {
     public ResponseEntity<Resource> download(@PathVariable("id") String id){
         return attachService.download(id);
     }
+
+    @DeleteMapping("/delete-by-id/{id}")
+    public ResponseEntity<String> deleteById(@PathVariable String id){
+        return attachService.deleteById(id);
+    }
 }

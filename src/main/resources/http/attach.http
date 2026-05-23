@@ -4,16 +4,19 @@ POST http://localhost:8081/attach/upload
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
-Content-Disposition: form-data; name="file"; filename="sdgsfg.jpg"
+Content-Disposition: form-data; name="file"; filename="sdgsfg.mkv"
 
-< C:\Users\user\Desktop\images\football.jpg
+< C:\Users\user\Desktop\images\friends.mkv
 
 ### OpenSimple
 GET http://localhost:8081/attach/open/football.jpg
 
 ### open
-GET http://localhost:8081/attach/aade7385-b0c8-4c54-97d4-a867922be8b0.png
+GET http://localhost:8081/attach/3b8af4a1-7d95-4d77-a8fc-f330908f304e.mkv
 
 ### download
-GET http://localhost:8081/attach/download/5da894f9-84af-4268-9c5a-a5663b0f0c30.jpg
+GET http://localhost:8081/attach/download/aa80afe9-445b-4112-8013-dace0c57b272.mkv
+
+### delete by id
+DELETE http://localhost:8081/attach/delete-by-id/3b8af4a1-7d95-4d77-a8fc-f330908f304e.mkv
 

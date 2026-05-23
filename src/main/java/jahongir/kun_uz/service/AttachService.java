@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -185,5 +186,14 @@ public class AttachService {
         } catch (Exception e) {
             throw new AppBadException(e.toString());
         }
+    }
+
+    public ResponseEntity<String> deleteById(String id){
+        Optional<AttachEntity> optional = attachRepository.findById(id);
+        if (optional.isEmpty()){
+            throw new AppBadException("No file found with this id");
+        }
+        attachRepository.deleteById(id);
+        return ResponseEntity.ok("Successfully deleted");
     }
 }
