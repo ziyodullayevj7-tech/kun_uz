@@ -26,11 +26,14 @@
 		<tag/>
 		<url/>
 	</scm>
+
 	<properties>
-		<java.version>17</java.version>
-		<maven.compiler.source>17</maven.compiler.source>
-		<maven.compiler.target>17</maven.compiler.target>
+		<!-- ✅ Bumped to 21: required by Spring Boot 4 and Vaadin 25 (class file 65.0) -->
+		<java.version>21</java.version>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -40,12 +43,19 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		<!-- Source: https://mvnrepository.com/artifact/com.vaadin/vaadin -->
+
+		<!-- Vaadin Spring Boot Starter — registers VaadinServlet automatically -->
 		<dependency>
 			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin</artifactId>
+			<artifactId>vaadin-spring-boot-starter</artifactId>
 			<version>25.3.3</version>
-			<scope>compile</scope>
+		</dependency>
+		<!-- Required for Vaadin dev-mode server -->
+		<dependency>
+			<groupId>com.vaadin</groupId>
+			<artifactId>vaadin-dev</artifactId>
+			<version>25.3.3</version>
+			<optional>true</optional>
 		</dependency>
 
 		<dependency>
@@ -53,12 +63,15 @@
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+
+		<!-- ✅ Bumped to 1.18.36: first Lombok release with full Java 21 support -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.20</version>
+			<version>1.18.36</version>
 			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -75,23 +88,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-api</artifactId>
-			<version>0.12.6</version>
-		</dependency>
-
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-impl</artifactId>
-			<version>0.12.6</version>
-		</dependency>
-
-		<dependency>
-			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt-jackson</artifactId>
-			<version>0.12.6</version>
 		</dependency>
 
 	</dependencies>
@@ -125,6 +121,8 @@
 								<path>
 									<groupId>org.projectlombok</groupId>
 									<artifactId>lombok</artifactId>
+									<!-- ✅ Pinned to match dependency version -->
+									<version>1.18.36</version>
 								</path>
 							</annotationProcessorPaths>
 						</configuration>
@@ -140,6 +138,8 @@
 								<path>
 									<groupId>org.projectlombok</groupId>
 									<artifactId>lombok</artifactId>
+									<!-- ✅ Pinned to match dependency version -->
+									<version>1.18.36</version>
 								</path>
 							</annotationProcessorPaths>
 						</configuration>
